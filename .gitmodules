@@ -1,0 +1,6 @@
+[submodule "py/litex"]
+	path = py/litex
+	url = https://github.com/enjoy-digital/litex
+[submodule "py/migen"]
+	path = py/migen
+	url = https://github.com/m-labs/migen.git
