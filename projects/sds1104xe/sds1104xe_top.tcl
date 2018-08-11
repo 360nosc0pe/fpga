@@ -132,6 +132,7 @@ xilinx.com:ip:mig_7series:4.1\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:processing_system7:5.5\
 user.org:user:spi_decoder_3_to_n:1.0\
+xilinx.com:ip:system_ila:1.1\
 xilinx.com:ip:xlconstant:1.1\
 xilinx.com:ip:axi_vdma:6.3\
 xilinx.com:ip:clk_wiz:6.0\
@@ -318,7 +319,7 @@ proc write_mig_file_system_mig_7series_0_0 { str_mig_prj_filepath } {
    puts $mig_prj_file {            <C0_S_AXI_ADDR_WIDTH>28</C0_S_AXI_ADDR_WIDTH>}
    puts $mig_prj_file {            <C0_S_AXI_DATA_WIDTH>128</C0_S_AXI_DATA_WIDTH>}
    puts $mig_prj_file {            <C0_S_AXI_ID_WIDTH>2</C0_S_AXI_ID_WIDTH>}
-   puts $mig_prj_file {            <C0_S_AXI_SUPPORTS_NARROW_BURST>0</C0_S_AXI_SUPPORTS_NARROW_BURST>}
+   puts $mig_prj_file {            <C0_S_AXI_SUPPORTS_NARROW_BURST>1</C0_S_AXI_SUPPORTS_NARROW_BURST>}
    puts $mig_prj_file {        </AXIParameters>}
    puts $mig_prj_file {    </Controller>}
    puts $mig_prj_file {</Project>}
@@ -556,6 +557,7 @@ proc create_root_design { parentCell } {
 
   # Create ports
   set ADC_0 [ create_bd_port -dir I -from 19 -to 0 ADC_0 ]
+  set ADC_1 [ create_bd_port -dir I -from 19 -to 0 ADC_1 ]
   set CAPTURE_SPI_CSN [ create_bd_port -dir O -from 7 -to 0 CAPTURE_SPI_CSN ]
   set CAPTURE_SPI_MOSI [ create_bd_port -dir O CAPTURE_SPI_MOSI ]
   set CAPTURE_SPI_SCLK [ create_bd_port -dir O CAPTURE_SPI_SCLK ]
@@ -589,14 +591,16 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.c_include_mm2s {0} \
    CONFIG.c_include_sg {0} \
+   CONFIG.c_s2mm_burst_size {256} \
    CONFIG.c_sg_include_stscntrl_strm {0} \
+   CONFIG.c_sg_length_width {23} \
  ] $adc1_dma
 
   # Create instance: axi_acq_interconnect, and set properties
   set axi_acq_interconnect [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_acq_interconnect ]
   set_property -dict [ list \
    CONFIG.NUM_MI {1} \
-   CONFIG.NUM_SI {3} \
+   CONFIG.NUM_SI {4} \
    CONFIG.S00_HAS_DATA_FIFO {2} \
    CONFIG.S01_HAS_DATA_FIFO {2} \
    CONFIG.S02_HAS_DATA_FIFO {0} \
@@ -613,7 +617,7 @@ proc create_root_design { parentCell } {
   set axi_interconnect_peripherals [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_peripherals ]
   set_property -dict [ list \
    CONFIG.M03_HAS_DATA_FIFO {2} \
-   CONFIG.NUM_MI {5} \
+   CONFIG.NUM_MI {6} \
    CONFIG.NUM_SI {1} \
    CONFIG.S01_HAS_DATA_FIFO {2} \
  ] $axi_interconnect_peripherals
@@ -651,69 +655,6 @@ proc create_root_design { parentCell } {
    CONFIG.C_MONITOR_TYPE {AXI} \
    CONFIG.C_NUM_OF_PROBES {19} \
  ] $ila_1
-
-  # Create instance: ila_2, and set properties
-  set ila_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:ila:6.2 ila_2 ]
-  set_property -dict [ list \
-   CONFIG.ALL_PROBE_SAME_MU_CNT {2} \
-   CONFIG.C_ENABLE_ILA_AXI_MON {false} \
-   CONFIG.C_EN_STRG_QUAL {1} \
-   CONFIG.C_MONITOR_TYPE {Native} \
-   CONFIG.C_NUM_OF_PROBES {1} \
-   CONFIG.C_PROBE0_MU_CNT {2} \
-   CONFIG.C_PROBE0_WIDTH {64} \
-   CONFIG.C_PROBE10_MU_CNT {2} \
-   CONFIG.C_PROBE11_MU_CNT {2} \
-   CONFIG.C_PROBE12_MU_CNT {2} \
-   CONFIG.C_PROBE13_MU_CNT {2} \
-   CONFIG.C_PROBE14_MU_CNT {2} \
-   CONFIG.C_PROBE15_MU_CNT {2} \
-   CONFIG.C_PROBE16_MU_CNT {2} \
-   CONFIG.C_PROBE17_MU_CNT {2} \
-   CONFIG.C_PROBE18_MU_CNT {2} \
-   CONFIG.C_PROBE19_MU_CNT {2} \
-   CONFIG.C_PROBE1_MU_CNT {2} \
-   CONFIG.C_PROBE1_WIDTH {1} \
-   CONFIG.C_PROBE20_MU_CNT {2} \
-   CONFIG.C_PROBE21_MU_CNT {2} \
-   CONFIG.C_PROBE22_MU_CNT {2} \
-   CONFIG.C_PROBE23_MU_CNT {2} \
-   CONFIG.C_PROBE24_MU_CNT {2} \
-   CONFIG.C_PROBE25_MU_CNT {2} \
-   CONFIG.C_PROBE26_MU_CNT {2} \
-   CONFIG.C_PROBE27_MU_CNT {2} \
-   CONFIG.C_PROBE28_MU_CNT {2} \
-   CONFIG.C_PROBE29_MU_CNT {2} \
-   CONFIG.C_PROBE2_MU_CNT {2} \
-   CONFIG.C_PROBE2_WIDTH {1} \
-   CONFIG.C_PROBE30_MU_CNT {2} \
-   CONFIG.C_PROBE31_MU_CNT {2} \
-   CONFIG.C_PROBE32_MU_CNT {2} \
-   CONFIG.C_PROBE33_MU_CNT {2} \
-   CONFIG.C_PROBE34_MU_CNT {2} \
-   CONFIG.C_PROBE35_MU_CNT {2} \
-   CONFIG.C_PROBE36_MU_CNT {2} \
-   CONFIG.C_PROBE37_MU_CNT {2} \
-   CONFIG.C_PROBE38_MU_CNT {2} \
-   CONFIG.C_PROBE39_MU_CNT {2} \
-   CONFIG.C_PROBE3_MU_CNT {2} \
-   CONFIG.C_PROBE3_WIDTH {1} \
-   CONFIG.C_PROBE40_MU_CNT {2} \
-   CONFIG.C_PROBE41_MU_CNT {2} \
-   CONFIG.C_PROBE42_MU_CNT {2} \
-   CONFIG.C_PROBE43_MU_CNT {2} \
-   CONFIG.C_PROBE4_MU_CNT {2} \
-   CONFIG.C_PROBE4_WIDTH {1} \
-   CONFIG.C_PROBE5_MU_CNT {2} \
-   CONFIG.C_PROBE5_WIDTH {1} \
-   CONFIG.C_PROBE6_MU_CNT {2} \
-   CONFIG.C_PROBE6_WIDTH {1} \
-   CONFIG.C_PROBE7_MU_CNT {2} \
-   CONFIG.C_PROBE7_WIDTH {1} \
-   CONFIG.C_PROBE8_MU_CNT {2} \
-   CONFIG.C_PROBE8_WIDTH {1} \
-   CONFIG.C_PROBE9_MU_CNT {2} \
- ] $ila_2
 
   # Create instance: lxwrap_0, and set properties
   set lxwrap_0 [ create_bd_cell -type ip -vlnv user.org:user:lxwrap:1.0 lxwrap_0 ]
@@ -1171,6 +1112,14 @@ proc create_root_design { parentCell } {
   # Create instance: spi_cs_decoder, and set properties
   set spi_cs_decoder [ create_bd_cell -type ip -vlnv user.org:user:spi_decoder_3_to_n:1.0 spi_cs_decoder ]
 
+  # Create instance: system_ila_0, and set properties
+  set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
+  set_property -dict [ list \
+   CONFIG.C_MON_TYPE {NATIVE} \
+   CONFIG.C_NUM_OF_PROBES {1} \
+   CONFIG.C_PROBE0_TYPE {0} \
+ ] $system_ila_0
+
   # Create instance: vcc, and set properties
   set vcc [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 vcc ]
 
@@ -1189,7 +1138,8 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
   connect_bd_intf_net -intf_net axi_interconnect_peripherals_M04_AXI [get_bd_intf_pins adc1_dma/S_AXI_LITE] [get_bd_intf_pins axi_interconnect_peripherals/M04_AXI]
   connect_bd_intf_net -intf_net display_M_AXI_MM2S [get_bd_intf_pins axi_interconnect_memory_ps/S00_AXI] [get_bd_intf_pins display/M_AXI_MM2S]
   connect_bd_intf_net -intf_net ethernet_gmii_to_mii_adapter_0_ETHERNET_MII [get_bd_intf_ports ETHERNET_MII] [get_bd_intf_pins ethernet_gmii_to_mii_adapter_0/ETHERNET_MII]
-  connect_bd_intf_net -intf_net lxwrap_0_adc0 [get_bd_intf_pins adc0_dma/S_AXIS_S2MM] [get_bd_intf_pins lxwrap_0/adc0]
+  connect_bd_intf_net -intf_net lxwrap_0_adc0 [get_bd_intf_pins adc0_dma/S_AXIS_S2MM] [get_bd_intf_pins lxwrap_0/adc0s]
+  connect_bd_intf_net -intf_net lxwrap_0_adc1s [get_bd_intf_pins adc1_dma/S_AXIS_S2MM] [get_bd_intf_pins lxwrap_0/adc1s]
   connect_bd_intf_net -intf_net mig_7series_0_DDR3 [get_bd_intf_ports DDR_PL] [get_bd_intf_pins mig_7series_0/DDR3]
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
@@ -1201,14 +1151,18 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
   connect_bd_net -net ADC_0_1 [get_bd_ports ADC_0] [get_bd_pins lxwrap_0/adc0]
   connect_bd_net -net ARESETN_1 [get_bd_pins axi_acq_interconnect/ARESETN] [get_bd_pins axi_interconnect_memory_ps/ARESETN] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/interconnect_aresetn]
   connect_bd_net -net ARESETN_2 [get_bd_pins axi_interconnect_peripherals/ARESETN] [get_bd_pins proc_sys_reset_clk_domain_peripherals/interconnect_aresetn]
-  connect_bd_net -net M00_ARESETN_1 [get_bd_pins adc0_dma/axi_resetn] [get_bd_pins adc1_dma/axi_resetn] [get_bd_pins axi_acq_interconnect/S02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M00_ARESETN] [get_bd_pins axi_interconnect_peripherals/M01_ARESETN] [get_bd_pins axi_interconnect_peripherals/M02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M03_ARESETN] [get_bd_pins axi_interconnect_peripherals/M04_ARESETN] [get_bd_pins axi_interconnect_peripherals/S00_ARESETN] [get_bd_pins display/axi_resetn] [get_bd_pins proc_sys_reset_clk_domain_peripherals/peripheral_aresetn]
+  connect_bd_net -net M00_ARESETN_1 [get_bd_pins adc0_dma/axi_resetn] [get_bd_pins adc1_dma/axi_resetn] [get_bd_pins axi_acq_interconnect/S02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M00_ARESETN] [get_bd_pins axi_interconnect_peripherals/M01_ARESETN] [get_bd_pins axi_interconnect_peripherals/M02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M03_ARESETN] [get_bd_pins axi_interconnect_peripherals/M04_ARESETN] [get_bd_pins axi_interconnect_peripherals/M05_ARESETN] [get_bd_pins axi_interconnect_peripherals/S00_ARESETN] [get_bd_pins display/axi_resetn] [get_bd_pins proc_sys_reset_clk_domain_peripherals/peripheral_aresetn]
+  connect_bd_net -net adc1_0_1 [get_bd_ports ADC_1] [get_bd_pins lxwrap_0/adc1]
   connect_bd_net -net concat_int_dout [get_bd_pins concat_int/dout] [get_bd_pins processing_system7_0/IRQ_F2P]
+  connect_bd_net -net debug [get_bd_pins lxwrap_0/debug] [get_bd_pins system_ila_0/probe0]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_nets debug]
   connect_bd_net -net display_VID_DATA [get_bd_ports VID_DATA] [get_bd_pins display/VID_DATA]
   connect_bd_net -net display_pixel_clock [get_bd_ports VID_PIXEL_CLK] [get_bd_pins display/pixel_clock]
   connect_bd_net -net display_vdma_mm2s_introut [get_bd_pins concat_int/In0] [get_bd_pins display/vdma_mm2s_introut]
   connect_bd_net -net display_vid_display_out_hsync [get_bd_ports VID_HSYNC] [get_bd_pins display/vid_display_out_hsync]
   connect_bd_net -net display_vid_display_out_vsync [get_bd_ports VID_VSYNC] [get_bd_pins display/vid_display_out_vsync]
-  connect_bd_net -net lxwrap_0_debug [get_bd_pins ila_2/probe0] [get_bd_pins lxwrap_0/debug]
   connect_bd_net -net lxwrap_0_mux_S [get_bd_ports OFFSETMUX_S] [get_bd_pins lxwrap_0/mux_S]
   connect_bd_net -net lxwrap_0_mux_nE [get_bd_ports OFFSETMUX_EN] [get_bd_pins lxwrap_0/mux_nE]
   connect_bd_net -net lxwrap_0_spi_DIN [get_bd_ports OFFSETDAC_SDATA] [get_bd_pins lxwrap_0/spi_DIN]
@@ -1218,11 +1172,11 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
   connect_bd_net -net mig_7series_0_ui_clk [get_bd_pins axi_acq_interconnect/M00_ACLK] [get_bd_pins mig_7series_0/ui_clk] [get_bd_pins rst_mig_7series_0_100M/slowest_sync_clk]
   connect_bd_net -net mig_7series_0_ui_clk_sync_rst [get_bd_pins mig_7series_0/ui_clk_sync_rst] [get_bd_pins rst_mig_7series_0_100M/ext_reset_in]
   connect_bd_net -net proc_sys_reset_clk_domain_peripherals_peripheral_reset [get_bd_pins lxwrap_0/sys_rst] [get_bd_pins proc_sys_reset_clk_domain_peripherals/peripheral_reset]
-  connect_bd_net -net proc_sys_reset_clk_domain_ps_memory_peripheral_aresetn [get_bd_pins axi_acq_interconnect/S00_ARESETN] [get_bd_pins axi_acq_interconnect/S01_ARESETN] [get_bd_pins axi_interconnect_memory_ps/M00_ARESETN] [get_bd_pins axi_interconnect_memory_ps/S00_ARESETN] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/peripheral_aresetn]
+  connect_bd_net -net proc_sys_reset_clk_domain_ps_memory_peripheral_aresetn [get_bd_pins axi_acq_interconnect/S00_ARESETN] [get_bd_pins axi_acq_interconnect/S01_ARESETN] [get_bd_pins axi_acq_interconnect/S03_ARESETN] [get_bd_pins axi_interconnect_memory_ps/M00_ARESETN] [get_bd_pins axi_interconnect_memory_ps/S00_ARESETN] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/peripheral_aresetn]
   connect_bd_net -net proc_sys_reset_clk_domain_ps_memory_peripheral_reset [get_bd_pins lxwrap_0/adc_axis_rst] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/peripheral_reset]
   connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins mig_7series_0/sys_clk_i] [get_bd_pins processing_system7_0/FCLK_CLK0]
-  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins adc0_dma/s_axi_lite_aclk] [get_bd_pins adc1_dma/s_axi_lite_aclk] [get_bd_pins axi_acq_interconnect/S02_ACLK] [get_bd_pins axi_interconnect_peripherals/ACLK] [get_bd_pins axi_interconnect_peripherals/M00_ACLK] [get_bd_pins axi_interconnect_peripherals/M01_ACLK] [get_bd_pins axi_interconnect_peripherals/M02_ACLK] [get_bd_pins axi_interconnect_peripherals/M03_ACLK] [get_bd_pins axi_interconnect_peripherals/M04_ACLK] [get_bd_pins axi_interconnect_peripherals/S00_ACLK] [get_bd_pins display/peripheral_clock] [get_bd_pins ila_1/clk] [get_bd_pins lxwrap_0/sys_clk] [get_bd_pins proc_sys_reset_clk_domain_peripherals/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK1] [get_bd_pins processing_system7_0/M_AXI_GP1_ACLK]
-  connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins adc0_dma/m_axi_s2mm_aclk] [get_bd_pins adc1_dma/m_axi_s2mm_aclk] [get_bd_pins axi_acq_interconnect/ACLK] [get_bd_pins axi_acq_interconnect/S00_ACLK] [get_bd_pins axi_acq_interconnect/S01_ACLK] [get_bd_pins axi_interconnect_memory_ps/ACLK] [get_bd_pins axi_interconnect_memory_ps/M00_ACLK] [get_bd_pins axi_interconnect_memory_ps/S00_ACLK] [get_bd_pins display/memory_clock] [get_bd_pins ila_0/clk] [get_bd_pins ila_2/clk] [get_bd_pins lxwrap_0/adc_axis_clk] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK2] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK]
+  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins adc0_dma/s_axi_lite_aclk] [get_bd_pins adc1_dma/s_axi_lite_aclk] [get_bd_pins axi_acq_interconnect/S02_ACLK] [get_bd_pins axi_interconnect_peripherals/ACLK] [get_bd_pins axi_interconnect_peripherals/M00_ACLK] [get_bd_pins axi_interconnect_peripherals/M01_ACLK] [get_bd_pins axi_interconnect_peripherals/M02_ACLK] [get_bd_pins axi_interconnect_peripherals/M03_ACLK] [get_bd_pins axi_interconnect_peripherals/M04_ACLK] [get_bd_pins axi_interconnect_peripherals/M05_ACLK] [get_bd_pins axi_interconnect_peripherals/S00_ACLK] [get_bd_pins display/peripheral_clock] [get_bd_pins ila_1/clk] [get_bd_pins lxwrap_0/sys_clk] [get_bd_pins proc_sys_reset_clk_domain_peripherals/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK1] [get_bd_pins processing_system7_0/M_AXI_GP1_ACLK] [get_bd_pins system_ila_0/clk]
+  connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins adc0_dma/m_axi_s2mm_aclk] [get_bd_pins adc1_dma/m_axi_s2mm_aclk] [get_bd_pins axi_acq_interconnect/ACLK] [get_bd_pins axi_acq_interconnect/S00_ACLK] [get_bd_pins axi_acq_interconnect/S01_ACLK] [get_bd_pins axi_acq_interconnect/S03_ACLK] [get_bd_pins axi_interconnect_memory_ps/ACLK] [get_bd_pins axi_interconnect_memory_ps/M00_ACLK] [get_bd_pins axi_interconnect_memory_ps/S00_ACLK] [get_bd_pins display/memory_clock] [get_bd_pins ila_0/clk] [get_bd_pins lxwrap_0/adc_axis_clk] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK2] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins mig_7series_0/sys_rst] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
   connect_bd_net -net processing_system7_0_FCLK_RESET1_N [get_bd_pins proc_sys_reset_clk_domain_peripherals/ext_reset_in] [get_bd_pins processing_system7_0/FCLK_RESET1_N]
   connect_bd_net -net processing_system7_0_FCLK_RESET2_N [get_bd_pins proc_sys_reset_clk_domain_ps_memory/ext_reset_in] [get_bd_pins processing_system7_0/FCLK_RESET2_N]
@@ -1276,4 +1230,6 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
 
 create_root_design ""
 
+
+common::send_msg_id "BD_TCL-1000" "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

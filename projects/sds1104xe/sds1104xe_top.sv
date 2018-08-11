@@ -11,6 +11,7 @@
 
 module sds1104xe
    (ADC_0,
+   ADC_1,
  CAPTURE_SPI_CSN,
  CAPTURE_SPI_MOSI,
  CAPTURE_SPI_SCLK,
@@ -74,6 +75,7 @@ module sds1104xe
  VID_VSYNC
  );
 input [19:0]ADC_0;
+input [19:0]ADC_1;
 output [7:0]CAPTURE_SPI_CSN;
 output CAPTURE_SPI_MOSI;
 output CAPTURE_SPI_SCLK;
@@ -137,6 +139,7 @@ output VID_PIXEL_CLK;
 output VID_VSYNC;
 
 wire [19:0]ADC_0;
+wire [19:0]ADC_1;
 wire [7:0]CAPTURE_SPI_CSN;
 wire CAPTURE_SPI_MOSI;
 wire CAPTURE_SPI_SCLK;
@@ -217,6 +220,7 @@ IOBUF ETHERNET_MDIO_mdio_iobuf
      .T(ETHERNET_MDIO_mdio_t));
 system system_i
     (.ADC_0(ADC_0),
+     .ADC_1(ADC_1),
      .CAPTURE_SPI_CSN(CAPTURE_SPI_CSN),
      .CAPTURE_SPI_MOSI(CAPTURE_SPI_MOSI),
      .CAPTURE_SPI_SCLK(CAPTURE_SPI_SCLK),

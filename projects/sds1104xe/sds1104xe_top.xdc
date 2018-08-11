@@ -286,3 +286,84 @@ set_property IOSTANDARD LVDS_25 [get_ports ADC_0[18]]
 set_property DIFF_TERM TRUE [get_ports ADC_0[18]]
 set_property PACKAGE_PIN AA9 [get_ports ADC_0[18]]
 
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[0]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[0]]
+set_property PACKAGE_PIN AB7 [get_ports ADC_1[0]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[1]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[1]]
+set_property PACKAGE_PIN AB6 [get_ports ADC_1[1]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[2]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[2]]
+set_property PACKAGE_PIN AB5 [get_ports ADC_1[2]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[3]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[3]]
+set_property PACKAGE_PIN AB4 [get_ports ADC_1[3]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[4]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[4]]
+set_property PACKAGE_PIN V7 [get_ports ADC_1[4]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[5]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[5]]
+set_property PACKAGE_PIN W7 [get_ports ADC_1[5]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[6]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[6]]
+set_property PACKAGE_PIN U6 [get_ports ADC_1[6]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[7]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[7]]
+set_property PACKAGE_PIN U5 [get_ports ADC_1[7]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[8]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[8]]
+set_property PACKAGE_PIN W6 [get_ports ADC_1[8]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[9]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[9]]
+set_property PACKAGE_PIN W5 [get_ports ADC_1[9]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[10]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[10]]
+set_property PACKAGE_PIN V5 [get_ports ADC_1[10]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[11]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[11]]
+set_property PACKAGE_PIN V4 [get_ports ADC_1[11]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[12]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[12]]
+set_property PACKAGE_PIN Y4 [get_ports ADC_1[12]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[13]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[13]]
+set_property PACKAGE_PIN AA4 [get_ports ADC_1[13]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[14]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[14]]
+set_property PACKAGE_PIN AB2 [get_ports ADC_1[14]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[15]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[15]]
+set_property PACKAGE_PIN AB1 [get_ports ADC_1[15]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[16]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[16]]
+set_property PACKAGE_PIN Y6 [get_ports ADC_1[16]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[17]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[17]]
+set_property PACKAGE_PIN Y5 [get_ports ADC_1[17]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[18]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[18]]
+set_property PACKAGE_PIN AA7 [get_ports ADC_1[18]]
+
+set_property IOSTANDARD LVDS_25 [get_ports ADC_1[19]]
+set_property DIFF_TERM TRUE [get_ports ADC_1[19]]
+set_property PACKAGE_PIN AA6 [get_ports ADC_1[19]]
+

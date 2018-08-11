@@ -10,7 +10,7 @@ from migen.genlib.cdc import MultiReg
 from litex.soc.interconnect import axi, csr_bus, csr
 
 class LvdsReceiver(Module, csr.AutoCSR):
-    def __init__(self, pads):
+    def __init__(self, pads, num):
 
         self._status = csr.CSRStatus(32, name='status', reset=0xadc)
         self._control = csr.CSRStorage(32, name='control')
@@ -39,6 +39,7 @@ class LvdsReceiver(Module, csr.AutoCSR):
         self.d_clk = Signal()
         self.d_rst = Signal()
         self.d_valid = Signal() # output
+        self.d_last = Signal()
         self.d_ready = Signal() # input
 
         self.fclk_preslip = Signal(8)
@@ -50,7 +51,7 @@ class LvdsReceiver(Module, csr.AutoCSR):
         lclk_i_bufio = Signal()
 
         self.clock_domains.cd_lclkdiv = ClockDomain()
-        
+
         self.specials += MultiReg(self._control.storage[0], self.cd_lclkdiv.rst, "lclkdiv")
 
         self.specials += [
@@ -161,18 +162,32 @@ class LvdsReceiver(Module, csr.AutoCSR):
                     self.bitslip_do.eq(((src != 0x0F) & (src != 0x33) & (src != 0x55)) & (bitslip_delay == 0)),
                 ]
 
+        self.last_counter = Signal(max=16383)
+
+        self.sync += [
+            If(self.d_valid & self.d_ready,
+                If(self.last_counter == 16383,
+                    self.last_counter.eq(0)
+                ).Else(
+                    self.last_counter.eq(self.last_counter + 1)
+                )
+            )
+        ]
+
         self.comb += [
             data_fifo.we.eq(1),
             data_fifo.re.eq(self.d_ready),
             self.d.eq(data_fifo.dout[:N_CHANNELS*8]),
             self.fclk.eq(data_fifo.dout[N_CHANNELS*8:N_CHANNELS*8+8]),
-            self.d_valid.eq(data_fifo.readable)
+            self.d_valid.eq(data_fifo.readable),
+            self.d_last.eq(self.last_counter == 16383)
         ]
 
-        self.specials += [
-            Instance("IDELAYCTRL",
-                i_REFCLK=ClockSignal(),
-                i_RST=ResetSignal(),
-            )
-        ]
+        if num == 0:
+            self.specials += [
+                Instance("IDELAYCTRL",
+                    i_REFCLK=ClockSignal(),
+                    i_RST=ResetSignal(),
+                )
+            ]
     

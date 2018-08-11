@@ -13,8 +13,11 @@ LVDS_ADC = [
     ("lclk_n", 1, DIR_M_TO_S),
 ]
 
+
+
+
 class Top(Module):
-    def __init__(self):
+    def __init__(self, num_adcs = 2):
         # AXI is byte addressed, CSR is word addressed...
         self.axi_width = 16
         self.csr_width = self.axi_width - 2
@@ -27,63 +30,72 @@ class Top(Module):
         self.offsetdac_mux = self.offsetdac.mux
         self.offsetdac_spi = self.offsetdac.spi
 
-
-        self.adc0 = Signal(20) # DP1A, DN1A, ...DN4B, LCLK, FCLK each p/n
-        
-        # AXIS ADC0 data
-        
-        self.adc_axis_clk = Signal()
-        self.adc_axis_rst = Signal()
-        
-        self.adc0_tdata = Signal(64)
-        self.adc0_tvalid = Signal()
-        self.adc0_tready = Signal()
-        
-        self.debug = Signal(64)
-        self.lvds_pads_adc0 = Record(LVDS_ADC)
-
-        for i in range(8):
-            self.comb += [
-                self.lvds_pads_adc0.d_p[i].eq(self.adc0[i * 2 + 0]),
-                self.lvds_pads_adc0.d_n[i].eq(self.adc0[i * 2 + 1]),
-            ]
-        self.comb += [
-            self.lvds_pads_adc0.lclk_p.eq(self.adc0[16]),
-            self.lvds_pads_adc0.lclk_n.eq(self.adc0[17]),
-            self.lvds_pads_adc0.fclk_p.eq(self.adc0[18]),
-            self.lvds_pads_adc0.fclk_n.eq(self.adc0[19]),
-        ]
-
-        self.submodules.lvds_adc0 = LvdsReceiver(self.lvds_pads_adc0)
-        
-        # wire up AXIS
-        self.comb += [
-            self.lvds_adc0.d_clk.eq(self.adc_axis_clk), # data clock
-            self.lvds_adc0.d_rst.eq(self.adc_axis_rst), # data reset
-            self.adc0_tdata.eq(self.lvds_adc0.d),
-            self.adc0_tvalid.eq(self.lvds_adc0.d_valid),
-            self.lvds_adc0.d_ready.eq(self.adc0_tready)
-        ]
-        
         # DEBUG
         count = Signal(20)
-        
-        self.clock_domains.cd_data = ClockDomain()
-        self.comb += self.cd_data.clk.eq(self.adc_axis_clk)
-        self.comb += self.cd_data.rst.eq(self.adc_axis_rst)
-        
         self.sync.data += [
             count.eq(count + 1)
         ]
-        
-        self.comb += [
-            self.debug[0:32].eq(self.lvds_adc0.d),
-            self.debug[32:40].eq(self.lvds_adc0.fclk_preslip),
-            self.debug[40].eq(self.lvds_adc0.d_valid),
-            self.debug[41].eq(self.adc0_tvalid),
-            self.debug[42].eq(self.adc0_tready),
-            self.debug[45:64].eq(count)
-        ]
+        self.debug = Signal(64)
+
+        # common across all ADC channels
+        self.adc_axis_clk = Signal()
+        self.adc_axis_rst = Signal()
+
+        def create_signal(name, signal):
+            setattr(self, name, signal)
+            getattr(self, name).name_override = name
+            return signal
+
+        # per-ADC signals
+        for nadc in range(num_adcs):
+            adc = create_signal("adc%d" % nadc, Signal(20))
+            adc_tdata = create_signal("adc%d_tdata" % nadc, Signal(64))
+            adc_tvalid = create_signal("adc%d_tvalid" % nadc, Signal())
+            adc_tready = create_signal("adc%d_tready" % nadc, Signal())
+            adc_tlast = create_signal("adc%d_tlast" % nadc, Signal())
+
+            lvds_pads_adc = Record(LVDS_ADC)
+
+            for i in range(8):
+                self.comb += [
+                    lvds_pads_adc.d_p[i].eq(adc[i * 2 + 0]),
+                    lvds_pads_adc.d_n[i].eq(adc[i * 2 + 1]),
+                ]
+            self.comb += [
+                lvds_pads_adc.lclk_p.eq(adc[16]),
+                lvds_pads_adc.lclk_n.eq(adc[17]),
+                lvds_pads_adc.fclk_p.eq(adc[18]),
+                lvds_pads_adc.fclk_n.eq(adc[19]),
+            ]
+
+            adcif = LvdsReceiver(lvds_pads_adc, nadc)
+
+            if nadc == 1:
+                self.comb += [
+                    self.debug[0:32].eq(adcif.d),
+                    self.debug[32:40].eq(adcif.fclk_preslip),
+                    self.debug[40].eq(adcif.d_valid),
+                    self.debug[41].eq(adcif.d_last),
+                    self.debug[42].eq(adcif.d_ready),
+                    self.debug[45:64].eq(count)
+                ]
+
+            self.comb += [
+                adcif.d_clk.eq(self.adc_axis_clk), # data clock
+                adcif.d_rst.eq(self.adc_axis_rst), # data reset
+                adc_tdata.eq(adcif.d),
+                adc_tvalid.eq(adcif.d_valid),
+                adcif.d_ready.eq(adc_tready),
+                adc_tlast.eq(adcif.d_last),
+            ]
+
+            setattr(self.submodules, "adcif%d" % nadc, adcif)
+
+
+
+        self.clock_domains.cd_data = ClockDomain()
+        self.comb += self.cd_data.clk.eq(self.adc_axis_clk)
+        self.comb += self.cd_data.rst.eq(self.adc_axis_rst)
 
         self.axi_lite = axi.Interface(
                 data_width=32, address_width=self.axi_width)
@@ -97,12 +109,15 @@ class Top(Module):
         self.submodules.csrcon = csr_bus.Interconnect(
                 self.csr, self.csrbankarray.get_buses())
 
-
         self.ios = set()
         for i in self.axi_lite, self.offsetdac_mux, self.offsetdac_spi:
             self.ios |= set(i.flatten())
-        self.ios |= set([self.debug, self.adc0, self.adc0_tdata, self.adc0_tvalid, self.adc0_tready, self.adc_axis_clk, self.adc_axis_rst])
-            
+        self.ios |= set([self.debug, self.adc_axis_clk, self.adc_axis_rst])
+
+        for nadc in range(num_adcs):
+            for i in "adc%d", "adc%d_tdata", "adc%d_tvalid", "adc%d_tready", "adc%d_tlast":
+                self.ios.add(getattr(self, i % nadc))
+
     def print_map(self):
         print('AXI Lite slave map:')
         for name, csrs, mapaddr, rmap in self.csrbankarray.banks:

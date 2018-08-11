@@ -216,7 +216,7 @@
       </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>adc0</spirit:name>
+      <spirit:name>adc0s</spirit:name>
       <spirit:description>ADC0 Output Stream</spirit:description>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
@@ -246,6 +246,14 @@
             <spirit:name>adc0_tready</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TLAST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc0_tlast</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
       </spirit:portMaps>
     </spirit:busInterface>
     <spirit:busInterface>
@@ -266,7 +274,7 @@
       <spirit:parameters>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_BUSIF</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.ADC_AXIS_CLK.ASSOCIATED_BUSIF">adc0</spirit:value>
+          <spirit:value spirit:id="BUSIFPARAM_VALUE.ADC_AXIS_CLK.ASSOCIATED_BUSIF">adc0s:adc1s</spirit:value>
         </spirit:parameter>
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
@@ -286,6 +294,46 @@
           </spirit:logicalPort>
           <spirit:physicalPort>
             <spirit:name>adc_axis_rst</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>adc1s</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
+      <spirit:master/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TDATA</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc1_tdata</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TLAST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc1_tlast</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TVALID</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc1_tvalid</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>TREADY</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>adc1_tready</spirit:name>
           </spirit:physicalPort>
         </spirit:portMap>
       </spirit:portMaps>
@@ -327,7 +375,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7e56935c</spirit:value>
+            <spirit:value>f8a327b4</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -343,7 +391,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>7e56935c</spirit:value>
+            <spirit:value>f8a327b4</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -819,6 +867,95 @@
         </spirit:wire>
       </spirit:port>
       <spirit:port>
+        <spirit:name>adc0_tlast</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc1</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">19</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc1_tdata</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:vector>
+            <spirit:left spirit:format="long">63</spirit:left>
+            <spirit:right spirit:format="long">0</spirit:right>
+          </spirit:vector>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic_vector</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc1_tvalid</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc1_tready</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+          <spirit:driver>
+            <spirit:defaultValue spirit:format="long">1</spirit:defaultValue>
+          </spirit:driver>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>adc1_tlast</spirit:name>
+        <spirit:wire>
+          <spirit:direction>out</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>std_logic</spirit:typeName>
+              <spirit:viewNameRef>xilinx_verilogsynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_verilogbehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
         <spirit:name>debug</spirit:name>
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
@@ -876,7 +1013,7 @@
       <spirit:file>
         <spirit:name>hdl/lxwrap_v1_0.v</spirit:name>
         <spirit:fileType>verilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_7e56935c</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_f8a327b4</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -943,8 +1080,8 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>LiteX Logic Wrapper</xilinx:displayName>
-      <xilinx:coreRevision>17</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2018-08-04T13:12:24Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>19</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2018-08-10T21:58:09Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
         <xilinx:tag xilinx:name="q3k.org:user:lxwrap:1.0_ARCHIVE_LOCATION">/project/fpga/ip_repo/lxwrap_1.0</xilinx:tag>
         <xilinx:tag xilinx:name="user.org:user:lxwrap:1.0_ARCHIVE_LOCATION">/project/fpga/ip_repo/lxwrap_1.0</xilinx:tag>
@@ -952,10 +1089,10 @@
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2018.2</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="87d4953e"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="5c4fbb58"/>
       <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="ed1368d5"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="b628c147"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="69d42396"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="69991528"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="e4635c92"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="78a7093e"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
