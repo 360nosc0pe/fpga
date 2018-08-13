@@ -140,6 +140,17 @@ set_property PACKAGE_PIN N22 [get_ports FP_LED_RCLK]
 set_property IOSTANDARD LVCMOS15 [get_ports {EMIO_GPIO_tri_io}]
 set_property PACKAGE_PIN R21 [get_ports {EMIO_GPIO_tri_io}]
 
+# Frontpanel buttons
+set_property IOSTANDARD LVCMOS33 [get_ports FP_BTN_CLOCK]
+set_property PACKAGE_PIN H18 [get_ports FP_BTN_CLOCK]
+
+set_property IOSTANDARD LVCMOS33 [get_ports FP_BTN_CLEAR]
+set_property PACKAGE_PIN G19 [get_ports FP_BTN_CLEAR]
+
+set_property IOSTANDARD LVCMOS33 [get_ports FP_BTN_IN]
+set_property PACKAGE_PIN G17 [get_ports FP_BTN_IN]
+
+
 ############### SPI for signal capture devices ###############
 
 # SPI

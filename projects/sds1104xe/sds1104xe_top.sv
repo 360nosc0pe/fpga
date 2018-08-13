@@ -11,7 +11,7 @@
 
 module sds1104xe
    (ADC_0,
-   ADC_1,
+ ADC_1,
  CAPTURE_SPI_CSN,
  CAPTURE_SPI_MOSI,
  CAPTURE_SPI_SCLK,
@@ -61,6 +61,9 @@ module sds1104xe
  FIXED_IO_ps_clk,
  FIXED_IO_ps_porb,
  FIXED_IO_ps_srstb,
+ FP_BTN_CLEAR,
+ FP_BTN_CLOCK,
+ FP_BTN_IN,
  FP_LED_MOSI,
  FP_LED_RCLK,
  FP_LED_SCLK,
@@ -72,8 +75,7 @@ module sds1104xe
  VID_DATA,
  VID_HSYNC,
  VID_PIXEL_CLK,
- VID_VSYNC
- );
+ VID_VSYNC);
 input [19:0]ADC_0;
 input [19:0]ADC_1;
 output [7:0]CAPTURE_SPI_CSN;
@@ -125,6 +127,9 @@ inout [53:0]FIXED_IO_mio;
 inout FIXED_IO_ps_clk;
 inout FIXED_IO_ps_porb;
 inout FIXED_IO_ps_srstb;
+output FP_BTN_CLEAR;
+output FP_BTN_CLOCK;
+input FP_BTN_IN;
 output FP_LED_MOSI;
 output FP_LED_RCLK;
 output FP_LED_SCLK;
@@ -195,6 +200,9 @@ wire [53:0]FIXED_IO_mio;
 wire FIXED_IO_ps_clk;
 wire FIXED_IO_ps_porb;
 wire FIXED_IO_ps_srstb;
+wire FP_BTN_CLEAR;
+wire FP_BTN_CLOCK;
+wire FP_BTN_IN;
 wire FP_LED_MOSI;
 wire FP_LED_RCLK;
 wire FP_LED_SCLK;
@@ -274,6 +282,9 @@ system system_i
      .FIXED_IO_ps_clk(FIXED_IO_ps_clk),
      .FIXED_IO_ps_porb(FIXED_IO_ps_porb),
      .FIXED_IO_ps_srstb(FIXED_IO_ps_srstb),
+     .FP_BTN_CLEAR(FP_BTN_CLEAR),
+     .FP_BTN_CLOCK(FP_BTN_CLOCK),
+     .FP_BTN_IN(FP_BTN_IN),
      .FP_LED_MOSI(FP_LED_MOSI),
      .FP_LED_RCLK(FP_LED_RCLK),
      .FP_LED_SCLK(FP_LED_SCLK),
@@ -285,6 +296,5 @@ system system_i
      .VID_DATA(VID_DATA),
      .VID_HSYNC(VID_HSYNC),
      .VID_PIXEL_CLK(VID_PIXEL_CLK),
-     .VID_VSYNC(VID_VSYNC)
-     );
+     .VID_VSYNC(VID_VSYNC));
 endmodule

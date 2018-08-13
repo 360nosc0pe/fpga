@@ -131,6 +131,7 @@ user.org:user:lxwrap:1.0\
 xilinx.com:ip:mig_7series:4.1\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:processing_system7:5.5\
+user.org:user:sds1202xe_fp:1.0\
 user.org:user:spi_decoder_3_to_n:1.0\
 xilinx.com:ip:system_ila:1.1\
 xilinx.com:ip:xlconstant:1.1\
@@ -561,6 +562,9 @@ proc create_root_design { parentCell } {
   set CAPTURE_SPI_CSN [ create_bd_port -dir O -from 7 -to 0 CAPTURE_SPI_CSN ]
   set CAPTURE_SPI_MOSI [ create_bd_port -dir O CAPTURE_SPI_MOSI ]
   set CAPTURE_SPI_SCLK [ create_bd_port -dir O CAPTURE_SPI_SCLK ]
+  set FP_BTN_CLEAR [ create_bd_port -dir O FP_BTN_CLEAR ]
+  set FP_BTN_CLOCK [ create_bd_port -dir O FP_BTN_CLOCK ]
+  set FP_BTN_IN [ create_bd_port -dir I FP_BTN_IN ]
   set FP_LED_MOSI [ create_bd_port -dir O FP_LED_MOSI ]
   set FP_LED_RCLK [ create_bd_port -dir O FP_LED_RCLK ]
   set FP_LED_SCLK [ create_bd_port -dir O FP_LED_SCLK ]
@@ -625,7 +629,7 @@ proc create_root_design { parentCell } {
   # Create instance: concat_int, and set properties
   set concat_int [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 concat_int ]
   set_property -dict [ list \
-   CONFIG.NUM_PORTS {1} \
+   CONFIG.NUM_PORTS {4} \
  ] $concat_int
 
   # Create instance: concat_spi_cs, and set properties
@@ -1109,6 +1113,9 @@ proc create_root_design { parentCell } {
   # Create instance: rst_mig_7series_0_100M, and set properties
   set rst_mig_7series_0_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_mig_7series_0_100M ]
 
+  # Create instance: sds1202xe_fp_0, and set properties
+  set sds1202xe_fp_0 [ create_bd_cell -type ip -vlnv user.org:user:sds1202xe_fp:1.0 sds1202xe_fp_0 ]
+
   # Create instance: spi_cs_decoder, and set properties
   set spi_cs_decoder [ create_bd_cell -type ip -vlnv user.org:user:spi_decoder_3_to_n:1.0 spi_cs_decoder ]
 
@@ -1136,6 +1143,7 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
   connect_bd_intf_net -intf_net axi_interconnect_peripherals_M02_AXI [get_bd_intf_pins adc0_dma/S_AXI_LITE] [get_bd_intf_pins axi_interconnect_peripherals/M02_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_peripherals_M03_AXI [get_bd_intf_pins axi_acq_interconnect/S02_AXI] [get_bd_intf_pins axi_interconnect_peripherals/M03_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_peripherals_M04_AXI [get_bd_intf_pins adc1_dma/S_AXI_LITE] [get_bd_intf_pins axi_interconnect_peripherals/M04_AXI]
+  connect_bd_intf_net -intf_net axi_interconnect_peripherals_M05_AXI [get_bd_intf_pins axi_interconnect_peripherals/M05_AXI] [get_bd_intf_pins sds1202xe_fp_0/S_AXI]
   connect_bd_intf_net -intf_net display_M_AXI_MM2S [get_bd_intf_pins axi_interconnect_memory_ps/S00_AXI] [get_bd_intf_pins display/M_AXI_MM2S]
   connect_bd_intf_net -intf_net ethernet_gmii_to_mii_adapter_0_ETHERNET_MII [get_bd_intf_ports ETHERNET_MII] [get_bd_intf_pins ethernet_gmii_to_mii_adapter_0/ETHERNET_MII]
   connect_bd_intf_net -intf_net lxwrap_0_adc0 [get_bd_intf_pins adc0_dma/S_AXIS_S2MM] [get_bd_intf_pins lxwrap_0/adc0s]
@@ -1151,8 +1159,11 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets axi_interconnect_peripherals_M01
   connect_bd_net -net ADC_0_1 [get_bd_ports ADC_0] [get_bd_pins lxwrap_0/adc0]
   connect_bd_net -net ARESETN_1 [get_bd_pins axi_acq_interconnect/ARESETN] [get_bd_pins axi_interconnect_memory_ps/ARESETN] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/interconnect_aresetn]
   connect_bd_net -net ARESETN_2 [get_bd_pins axi_interconnect_peripherals/ARESETN] [get_bd_pins proc_sys_reset_clk_domain_peripherals/interconnect_aresetn]
-  connect_bd_net -net M00_ARESETN_1 [get_bd_pins adc0_dma/axi_resetn] [get_bd_pins adc1_dma/axi_resetn] [get_bd_pins axi_acq_interconnect/S02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M00_ARESETN] [get_bd_pins axi_interconnect_peripherals/M01_ARESETN] [get_bd_pins axi_interconnect_peripherals/M02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M03_ARESETN] [get_bd_pins axi_interconnect_peripherals/M04_ARESETN] [get_bd_pins axi_interconnect_peripherals/M05_ARESETN] [get_bd_pins axi_interconnect_peripherals/S00_ARESETN] [get_bd_pins display/axi_resetn] [get_bd_pins proc_sys_reset_clk_domain_peripherals/peripheral_aresetn]
+  connect_bd_net -net M00_ARESETN_1 [get_bd_pins adc0_dma/axi_resetn] [get_bd_pins adc1_dma/axi_resetn] [get_bd_pins axi_acq_interconnect/S02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M00_ARESETN] [get_bd_pins axi_interconnect_peripherals/M01_ARESETN] [get_bd_pins axi_interconnect_peripherals/M02_ARESETN] [get_bd_pins axi_interconnect_peripherals/M03_ARESETN] [get_bd_pins axi_interconnect_peripherals/M04_ARESETN] [get_bd_pins axi_interconnect_peripherals/M05_ARESETN] [get_bd_pins axi_interconnect_peripherals/S00_ARESETN] [get_bd_pins display/axi_resetn] [get_bd_pins proc_sys_reset_clk_domain_peripherals/peripheral_aresetn] [get_bd_pins sds1202xe_fp_0/S_AXI_ARESETN]
+  connect_bd_net -net MATRIX_DATA_IN_0_1 [get_bd_ports FP_BTN_IN] [get_bd_pins sds1202xe_fp_0/MATRIX_DATA_IN]
+  connect_bd_net -net adc0_dma_s2mm_introut [get_bd_pins adc0_dma/s2mm_introut] [get_bd_pins concat_int/In2]
   connect_bd_net -net adc1_0_1 [get_bd_ports ADC_1] [get_bd_pins lxwrap_0/adc1]
+  connect_bd_net -net adc1_dma_s2mm_introut [get_bd_pins adc1_dma/s2mm_introut] [get_bd_pins concat_int/In3]
   connect_bd_net -net concat_int_dout [get_bd_pins concat_int/dout] [get_bd_pins processing_system7_0/IRQ_F2P]
   connect_bd_net -net debug [get_bd_pins lxwrap_0/debug] [get_bd_pins system_ila_0/probe0]
   set_property -dict [ list \
@@ -1175,7 +1186,7 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net proc_sys_reset_clk_domain_ps_memory_peripheral_aresetn [get_bd_pins axi_acq_interconnect/S00_ARESETN] [get_bd_pins axi_acq_interconnect/S01_ARESETN] [get_bd_pins axi_acq_interconnect/S03_ARESETN] [get_bd_pins axi_interconnect_memory_ps/M00_ARESETN] [get_bd_pins axi_interconnect_memory_ps/S00_ARESETN] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/peripheral_aresetn]
   connect_bd_net -net proc_sys_reset_clk_domain_ps_memory_peripheral_reset [get_bd_pins lxwrap_0/adc_axis_rst] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/peripheral_reset]
   connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins mig_7series_0/sys_clk_i] [get_bd_pins processing_system7_0/FCLK_CLK0]
-  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins adc0_dma/s_axi_lite_aclk] [get_bd_pins adc1_dma/s_axi_lite_aclk] [get_bd_pins axi_acq_interconnect/S02_ACLK] [get_bd_pins axi_interconnect_peripherals/ACLK] [get_bd_pins axi_interconnect_peripherals/M00_ACLK] [get_bd_pins axi_interconnect_peripherals/M01_ACLK] [get_bd_pins axi_interconnect_peripherals/M02_ACLK] [get_bd_pins axi_interconnect_peripherals/M03_ACLK] [get_bd_pins axi_interconnect_peripherals/M04_ACLK] [get_bd_pins axi_interconnect_peripherals/M05_ACLK] [get_bd_pins axi_interconnect_peripherals/S00_ACLK] [get_bd_pins display/peripheral_clock] [get_bd_pins ila_1/clk] [get_bd_pins lxwrap_0/sys_clk] [get_bd_pins proc_sys_reset_clk_domain_peripherals/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK1] [get_bd_pins processing_system7_0/M_AXI_GP1_ACLK] [get_bd_pins system_ila_0/clk]
+  connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins adc0_dma/s_axi_lite_aclk] [get_bd_pins adc1_dma/s_axi_lite_aclk] [get_bd_pins axi_acq_interconnect/S02_ACLK] [get_bd_pins axi_interconnect_peripherals/ACLK] [get_bd_pins axi_interconnect_peripherals/M00_ACLK] [get_bd_pins axi_interconnect_peripherals/M01_ACLK] [get_bd_pins axi_interconnect_peripherals/M02_ACLK] [get_bd_pins axi_interconnect_peripherals/M03_ACLK] [get_bd_pins axi_interconnect_peripherals/M04_ACLK] [get_bd_pins axi_interconnect_peripherals/M05_ACLK] [get_bd_pins axi_interconnect_peripherals/S00_ACLK] [get_bd_pins display/peripheral_clock] [get_bd_pins ila_1/clk] [get_bd_pins lxwrap_0/sys_clk] [get_bd_pins proc_sys_reset_clk_domain_peripherals/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK1] [get_bd_pins processing_system7_0/M_AXI_GP1_ACLK] [get_bd_pins sds1202xe_fp_0/S_AXI_ACLK] [get_bd_pins system_ila_0/clk]
   connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins adc0_dma/m_axi_s2mm_aclk] [get_bd_pins adc1_dma/m_axi_s2mm_aclk] [get_bd_pins axi_acq_interconnect/ACLK] [get_bd_pins axi_acq_interconnect/S00_ACLK] [get_bd_pins axi_acq_interconnect/S01_ACLK] [get_bd_pins axi_acq_interconnect/S03_ACLK] [get_bd_pins axi_interconnect_memory_ps/ACLK] [get_bd_pins axi_interconnect_memory_ps/M00_ACLK] [get_bd_pins axi_interconnect_memory_ps/S00_ACLK] [get_bd_pins display/memory_clock] [get_bd_pins ila_0/clk] [get_bd_pins lxwrap_0/adc_axis_clk] [get_bd_pins proc_sys_reset_clk_domain_ps_memory/slowest_sync_clk] [get_bd_pins processing_system7_0/FCLK_CLK2] [get_bd_pins processing_system7_0/S_AXI_HP0_ACLK]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins mig_7series_0/sys_rst] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
   connect_bd_net -net processing_system7_0_FCLK_RESET1_N [get_bd_pins proc_sys_reset_clk_domain_peripherals/ext_reset_in] [get_bd_pins processing_system7_0/FCLK_RESET1_N]
@@ -1190,6 +1201,9 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net processing_system7_0_SPI1_SCLK_O [get_bd_ports FP_LED_SCLK] [get_bd_pins processing_system7_0/SPI1_SCLK_O]
   connect_bd_net -net processing_system7_0_SPI1_SS_O [get_bd_ports FP_LED_RCLK] [get_bd_pins processing_system7_0/SPI1_SS_O]
   connect_bd_net -net rst_mig_7series_0_100M_peripheral_aresetn [get_bd_pins axi_acq_interconnect/M00_ARESETN] [get_bd_pins mig_7series_0/aresetn] [get_bd_pins rst_mig_7series_0_100M/peripheral_aresetn]
+  connect_bd_net -net sds1202xe_fp_0_INT_OUT [get_bd_pins concat_int/In1] [get_bd_pins sds1202xe_fp_0/INT_OUT]
+  connect_bd_net -net sds1202xe_fp_0_MATRIX_CLEAR [get_bd_ports FP_BTN_CLEAR] [get_bd_pins sds1202xe_fp_0/MATRIX_CLEAR]
+  connect_bd_net -net sds1202xe_fp_0_MATRIX_CLOCK [get_bd_ports FP_BTN_CLOCK] [get_bd_pins sds1202xe_fp_0/MATRIX_CLOCK]
   connect_bd_net -net spi_decoder_3_to_n_0_spi_csn [get_bd_ports CAPTURE_SPI_CSN] [get_bd_pins spi_cs_decoder/spi_csn]
   connect_bd_net -net vcc_dout [get_bd_pins processing_system7_0/SPI0_SS_I] [get_bd_pins processing_system7_0/SPI1_SS_I] [get_bd_pins vcc/dout]
   connect_bd_net -net xlconcat_0_dout [get_bd_pins concat_spi_cs/dout] [get_bd_pins spi_cs_decoder/spi_select]
@@ -1202,6 +1216,7 @@ HDL_ATTRIBUTE.DEBUG {true} \
   create_bd_addr_seg -range 0x00010000 -offset 0x80000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs display/axi_vdma_0/S_AXI_LITE/Reg] SEG_axi_vdma_0_Reg
   create_bd_addr_seg -range 0x00010000 -offset 0x83C00000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs lxwrap_0/S00_AXI/S00_AXI_reg] SEG_lxwrap_0_S00_AXI_reg
   create_bd_addr_seg -range 0x10000000 -offset 0x90000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs mig_7series_0/memmap/memaddr] SEG_mig_7series_0_memaddr
+  create_bd_addr_seg -range 0x00010000 -offset 0x83C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs sds1202xe_fp_0/S00_AXI/S00_AXI_reg] SEG_sds1202xe_fp_0_S00_AXI_reg
   create_bd_addr_seg -range 0x10000000 -offset 0x00000000 [get_bd_addr_spaces display/axi_vdma_0/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
 
   # Exclude Address Segments
@@ -1230,6 +1245,4 @@ HDL_ATTRIBUTE.DEBUG {true} \
 
 create_root_design ""
 
-
-common::send_msg_id "BD_TCL-1000" "WARNING" "This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

@@ -4,7 +4,7 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<spirit:vendor>user.org</spirit:vendor>
 	<spirit:library>user</spirit:library>
-	<spirit:name>sds1202xe_fp_button_input</spirit:name>
+	<spirit:name>sds1202xe_fp</spirit:name>
 	<spirit:version>1.0</spirit:version>
 	<spirit:busInterfaces>
 		<spirit:busInterface>
@@ -769,7 +769,7 @@
 		<spirit:fileSet>
 			<spirit:name>xilinx_xpgui_view_fileset</spirit:name>
 			<spirit:file>
-				<spirit:name>xgui/sds1202xe_fp_button_input_v1_0.tcl</spirit:name>
+				<spirit:name>xgui/sds1202xe_fp_v1_0.tcl</spirit:name>
 				<spirit:fileType>tclSource</spirit:fileType>
 				<spirit:userFileType>CHECKSUM_fd592ead</spirit:userFileType>
 				<spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
@@ -866,7 +866,7 @@
 			<spirit:name>Component_Name</spirit:name>
 			<spirit:value spirit:resolve="user"
 					spirit:id="PARAM_VALUE.Component_Name"
-					spirit:order="1">sds1202xe_fp_button_input_v1_0</spirit:value>
+					spirit:order="1">sds1202xe_fp_v1_0</spirit:value>
 		</spirit:parameter>
 	</spirit:parameters>
 	<spirit:vendorExtensions>
@@ -881,7 +881,7 @@
 			<xilinx:coreRevision>5</xilinx:coreRevision>
 			<xilinx:coreCreationDateTime>2017-11-15T00:27:41Z</xilinx:coreCreationDateTime>
 			<xilinx:tags>
-				<xilinx:tag xilinx:name="user.org:user:sds1202xe_fp_button_input:1.0_ARCHIVE_LOCATION">/project/fpga/ip_repo/sds1202xe_fp_button_input_1.0</xilinx:tag>
+				<xilinx:tag xilinx:name="user.org:user:sds1202xe_fp:1.0_ARCHIVE_LOCATION">/project/fpga/ip_repo/sds1202xe_fp_1.0</xilinx:tag>
 			</xilinx:tags>
 		</xilinx:coreExtensions>
 		<xilinx:packagingInfo>
